@@ -6,6 +6,7 @@ from docx import Document
 from docx.enum.section import WD_SECTION
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_LINE_SPACING
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
@@ -23,6 +24,7 @@ DARK_GRAY = "666666"
 MID_GRAY = "BFBFBF"
 LIGHT_GRAY = "F2F2F2"
 PALE_GRAY = "E7E6E6"
+REPOSITORY_URL = "https://github.com/lizh-coder/Robotics-Integration-Team-Project-I"
 
 
 def add_alt_text_to_header_images(path):
@@ -55,6 +57,28 @@ def set_cell_shading(cell, fill):
         shd = OxmlElement("w:shd")
         tc_pr.append(shd)
     shd.set(qn("w:fill"), fill)
+
+
+def add_hyperlink(paragraph, text, url):
+    """Add a black, underlined external hyperlink compatible with Word."""
+    relationship_id = paragraph.part.relate_to(url, RT.HYPERLINK, is_external=True)
+    hyperlink = OxmlElement("w:hyperlink")
+    hyperlink.set(qn("r:id"), relationship_id)
+    run = OxmlElement("w:r")
+    run_pr = OxmlElement("w:rPr")
+    color = OxmlElement("w:color")
+    color.set(qn("w:val"), BLACK)
+    underline = OxmlElement("w:u")
+    underline.set(qn("w:val"), "single")
+    font_size = OxmlElement("w:sz")
+    font_size.set(qn("w:val"), "17")
+    run_pr.extend([color, underline, font_size])
+    run.append(run_pr)
+    text_node = OxmlElement("w:t")
+    text_node.text = text
+    run.append(text_node)
+    hyperlink.append(run)
+    paragraph._p.append(hyperlink)
 
 
 def set_cell_margins(cell, top=90, start=100, bottom=90, end=100):
@@ -312,12 +336,21 @@ def build():
         r.font.name = "Times New Roman"
         r.font.size = Pt(10)
         r.font.color.rgb = RGBColor.from_string(BLACK)
-    p = add_para(doc, "Student ID: 24020036039", style="Authors", align=WD_ALIGN_PARAGRAPH.CENTER, after=4)
+    p = add_para(doc, "Student ID: 24020036039", style="Authors", align=WD_ALIGN_PARAGRAPH.CENTER, after=1)
     for r in p.runs:
         r.font.name = "Times New Roman"
         r.font.size = Pt(8.5)
         r.font.italic = True
         r.font.color.rgb = RGBColor.from_string(DARK_GRAY)
+    p = doc.add_paragraph(style="Authors")
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(4)
+    lead = p.add_run("Repository: ")
+    lead.font.name = "Times New Roman"
+    lead.font.size = Pt(8.5)
+    lead.font.color.rgb = RGBColor.from_string(DARK_GRAY)
+    add_hyperlink(p, "GitHub repository: lizh-coder/Robotics-Integration-Team-Project-I", REPOSITORY_URL)
 
     p = add_para(doc, "Abstract - This report documents the installation and use of ROS 1 Noetic for the MIT VNAV Lab 2 two-drone exercise. The work reuses the supplied two_drones_pkg skeleton, builds a catkin workspace under Ubuntu 20.04 on WSL2, publishes the world-to-drone transforms, queries relative transforms with tf2, and visualizes the trajectories in RViz. The dynamic implementation was verified at 50 Hz, and the required homogeneous-transform and quaternion derivations are included. Runtime screenshots remain marked as placeholders for insertion from the student's own terminal and RViz session.", style="Abstract", after=3)
     for r in p.runs:
