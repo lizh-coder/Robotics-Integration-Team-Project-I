@@ -1,0 +1,62 @@
+C++ Warm-up Exercises
+
+1. Operators
+
+1.1
+Code:
+  int i = 0, j;
+  j = ++i;
+  j = i++;
+
+After j = ++i, i is 1 and j is 1. The prefix increment increments i first.
+After j = i++, j is 1 and i is 2. The postfix increment uses the old value for j,
+then increments i.
+Final values: i = 2, j = 1.
+
+1.2
+The condition i < 42 is false because i equals 42. The ternary expression selects
+"b", so the program prints:
+  b
+
+2. References and Pointers
+
+2.1
+ri is a reference to i. Assigning 10 to ri changes i as well. The program prints:
+  10 10
+
+2.2
+j points to i. The expression *j = *j**j computes 42 * 42 and stores it in i.
+The program prints:
+  1764
+
+2.3
+i + 2 points to the third element. Its value becomes i[2] = i[1] - i[3] = 24 - 24.
+The program prints:
+  0
+
+2.4
+reset receives j by reference and assigns zero to the original variable. The program
+prints:
+  0
+
+3. Numbers
+
+3.1
+short, int, long, and long long are signed integer types with increasing minimum
+widths. On the 64-bit Ubuntu LP64 platform used here, they are commonly 16, 32,
+64, and 64 bits respectively. Exact widths are platform-dependent, so sizeof should
+be used when a program needs to know the actual size.
+
+3.2
+float normally provides about 6-7 decimal digits of precision, while double normally
+provides about 15-16 decimal digits. Assigning 3.14 to an int discards the fractional
+part, so i becomes 3.
+
+3.3
+Signed types represent negative and non-negative values. Unsigned types represent
+only non-negative values and use the full bit pattern for their range. For an 8-bit
+unsigned char, assigning -1 wraps modulo 256, so c has the value 255.
+
+3.4
+The integer 42 is nonzero and therefore evaluates as true. The if branch executes,
+so i becomes 0.
