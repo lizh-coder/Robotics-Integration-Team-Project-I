@@ -1,3 +1,15 @@
 
 # Do not upload unfinished LAB1 report
 /LAB1/report/
+
+# ROS/catkin generated files: retain source, configuration, screenshots, and reports.
+**/build/
+**/devel/
+**/install/
+**/logs/
+**/.catkin_tools/
+
+# Local cache and Office lock files
+**/__pycache__/
+*.py[cod]
+~$*.docx

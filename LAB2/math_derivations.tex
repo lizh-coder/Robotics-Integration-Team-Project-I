@@ -1,0 +1,134 @@
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb,bm,geometry}
+\geometry{margin=2.3cm}
+\title{LAB2 数学交付物：齐次变换与四元数}
+\author{}
+\date{}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\oz}{o_2^1(t)}
+
+\begin{document}
+\maketitle
+
+\section{交付物 4：齐次变换与轨迹}
+
+世界坐标系中两架无人机的位置为
+\[
+ o_1^w=\begin{bmatrix}\cos t\\\sin t\\0\end{bmatrix},\qquad
+ o_2^w=\begin{bmatrix}\sin t\\0\\\cos(2t)\end{bmatrix}.
+\]
+令 $x=\sin t$，则
+\[
+ z=\cos(2t)=1-2\sin^2t=1-2x^2,\qquad y=0,
+\]
+所以 AV2 在世界 $x$-$z$ 平面内沿抛物线弧段运动。
+
+AV1 的姿态为 $R_z(t)$，AV2 的姿态取为单位阵，因此
+\[
+{}^wT_1=\begin{bmatrix}R_z(t)&o_1^w\\0&1\end{bmatrix},\qquad
+{}^wT_2=\begin{bmatrix}I&o_2^w\\0&1\end{bmatrix},
+\]
+\[
+{}^1T_2=({}^wT_1)^{-1}{}^wT_2,\qquad
+\oz=R_z(-t)(o_2^w-o_1^w).
+\]
+直接计算得到
+\[
+\oz=\begin{bmatrix}
+\sin t\cos t-1\\-\sin^2t\\\cos(2t)
+\end{bmatrix}
+=\begin{bmatrix}
+-1+\frac12\sin(2t)\\
+-\frac12+\frac12\cos(2t)\\
+\cos(2t)
+\end{bmatrix}.
+\]
+因此 $z_2^1=2y_2^1+1$，轨迹位于平面
+\[
+\Pi:\quad z-2y=1.
+\]
+
+取平面内中心和右手正交基
+\[
+p^1=\begin{bmatrix}-1\\-1/2\\0\end{bmatrix},\quad
+x_p=\begin{bmatrix}1\\0\\0\end{bmatrix},\quad
+y_p=\frac1{\sqrt5}\begin{bmatrix}0\\1\\2\end{bmatrix},\quad
+z_p=\frac1{\sqrt5}\begin{bmatrix}0\\-2\\1\end{bmatrix}.
+\]
+令 \( {}^1R_p=[x_p\ y_p\ z_p] \)，则
+\[
+o_2^p=({}^1R_p)^T(\oz-p^1)
+=\begin{bmatrix}
+\frac12\sin(2t)\\[2pt]
+\frac{\sqrt5}{2}\cos(2t)\\[2pt]
+0
+\end{bmatrix}.
+\]
+于是
+\[
+\left(\frac{x_p}{1/2}\right)^2+
+\left(\frac{y_p}{\sqrt5/2}\right)^2=1.
+\]
+AV2 相对 AV1 的轨迹是平面 $\Pi$ 内的椭圆，半轴长度分别为
+\[
+a=\frac{\sqrt5}{2},\qquad b=\frac12.
+\]
+
+\section{交付物 5：四元数线性映射}
+
+采用 $q=[q_1,q_2,q_3,q_4]^T$（标量部在最后）的约定。四元数范数满足
+\[
+\|q_a\otimes q_b\|=\|q_a\|\,\|q_b\|.
+\]
+固定单位四元数 $q$，左乘和右乘分别由 $\Omega_1(q)$ 和 $\Omega_2(q)$ 表示，
+都保持任意向量的范数。因此
+\[
+\Omega_1(q)^T\Omega_1(q)=I_4,\qquad
+\Omega_2(q)^T\Omega_2(q)=I_4,
+\]
+且正交矩阵的另一侧乘积也为 $I_4$。
+
+记 $e_4=[0,0,0,1]^T$。两矩阵的第四列都等于 $q$，所以
+\[
+\Omega_1(q)^Tq=\Omega_1(q)^T\Omega_1(q)e_4=e_4,\qquad
+\Omega_2(q)^Tq=\Omega_2(q)^T\Omega_2(q)e_4=e_4.
+\]
+
+对任意 $x,y,z\in\R^4$，由
+\[
+\Omega_1(x)z=x\otimes z,\qquad \Omega_2(y)z=z\otimes y,
+\]
+以及四元数乘法的结合律，
+\[
+\Omega_1(x)\Omega_2(y)z=x\otimes(z\otimes y)
+=(x\otimes z)\otimes y=\Omega_2(y)\Omega_1(x)z,
+\]
+故 $\Omega_1(x)\Omega_2(y)=\Omega_2(y)\Omega_1(x)$。
+
+令 $\bar y=[-y_1,-y_2,-y_3,y_4]^T$，可由矩阵直接验证
+\[
+\Omega_2(y)^T=\Omega_2(\bar y).
+\]
+再次使用结合律可得
+\[
+\Omega_1(x)\Omega_2(y)^T=\Omega_2(y)^T\Omega_1(x).
+\]
+
+\section{可选交付物 6：内禀与外禀旋转}
+
+采用列向量和主动旋转。若固定世界轴旋转按时间顺序为 $R_0,R_1,R_2$，
+外禀旋转每次左乘，最终姿态为
+\[
+R_{\mathrm{ext}}=R_2R_1R_0.
+\]
+若改为附着在物体上的轴，并按反向顺序进行内禀旋转，则每次右乘：
+\[
+R=IR_2,\qquad R=(IR_2)R_1,\qquad
+R=((IR_2)R_1)R_0=R_2R_1R_0.
+\]
+因此两种描述具有相同的最终姿态。取题目给定的
+$R_0=R_x(90^\circ)$、$R_1=R_y(180^\circ)$、$R_2=R_x(-30^\circ)$
+即可得到同样结论。
+
+\end{document}
