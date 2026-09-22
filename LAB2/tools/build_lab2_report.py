@@ -352,7 +352,7 @@ def build():
     lead.font.color.rgb = RGBColor.from_string(DARK_GRAY)
     add_hyperlink(p, "GitHub repository: lizh-coder/Robotics-Integration-Team-Project-I", REPOSITORY_URL)
 
-    p = add_para(doc, "Abstract - This report documents the installation and use of ROS 1 Noetic for the MIT VNAV Lab 2 two-drone exercise. The work reuses the supplied two_drones_pkg skeleton, builds a catkin workspace under Ubuntu 20.04 on WSL2, publishes the world-to-drone transforms, queries relative transforms with tf2, and visualizes the trajectories in RViz. The dynamic implementation was verified at 50 Hz, and the required homogeneous-transform and quaternion derivations are included. Runtime screenshots remain marked as placeholders for insertion from the student's own terminal and RViz session.", style="Abstract", after=3)
+    p = add_para(doc, "Abstract - This report documents the installation and use of ROS 1 Noetic for the MIT VNAV Lab 2 two-drone exercise. The work reuses the supplied two_drones_pkg skeleton, builds a catkin workspace under Ubuntu 20.04 on WSL2, publishes the world-to-drone transforms, queries relative transforms with tf2, and visualizes the trajectories in RViz. The dynamic implementation was verified at 50 Hz, and the required homogeneous-transform and quaternion derivations are included. Runtime evidence is provided in the accompanying figures.", style="Abstract", after=3)
     for r in p.runs:
         r.font.name = "Times New Roman"
         r.font.size = Pt(8.5)
@@ -372,7 +372,7 @@ def build():
         ("Package", "two_drones_pkg found with rospack"),
         ("Transform publisher", "Implemented and verified at 50 Hz"),
         ("Transform listener", "lookupTransform implemented for three trails"),
-        ("Screenshots", "Evidence captured and embedded in this report"),
+        ("Runtime evidence", "Embedded in the corresponding figures"),
         ("Student information", "Li Zehao; Student ID: 24020036039"),
     ], [1.25, 2.0])
 
@@ -457,37 +457,10 @@ def build():
     add_body(doc, "For column vectors and active rotations, extrinsic rotations about fixed world axes multiply on the left, giving R_ext = R₂R₁R₀. Intrinsic rotations about the current body axes multiply on the right. If the intrinsic sequence is applied in reverse order, the accumulated expression is also R₂R₁R₀, so both descriptions produce the same final orientation. The required numerical substitution is:")
     add_equation(doc, "R₀ = Rx(90°),    R₁ = Ry(180°),    R₂ = Rx(-30°)")
     add_equation(doc, "R₂R₁R₀ = [ -1   0          0       ;   0  -1/2  -√3/2  ;   0  -√3/2   1/2 ]")
-    add_body(doc, "Thus the extrinsic sequence and the reversed intrinsic sequence have exactly the same final orientation. This completes the optional deliverable without requiring an additional ROS screenshot.")
+    add_body(doc, "Thus the extrinsic sequence and the reversed intrinsic sequence have exactly the same final orientation. This completes the optional deliverable.")
 
-    add_heading(doc, "9. Complete Operation and Screenshot Procedure", 1)
-    add_body(doc, "The following sequence produces the evidence required for the final report. Run each command in a separate Ubuntu terminal unless the command is explicitly marked as a continuation in the same terminal.")
-    steps = [
-        "1. Enter Ubuntu from PowerShell with: wsl -d Ubuntu-20.04.",
-        "2. In Terminal 1 run source /opt/ros/noetic/setup.bash and roscore. Capture the terminal only if the instructor requests ROS master evidence.",
-        "3. In Terminal 2 run source /opt/ros/noetic/setup.bash, source /root/vnav_ws/devel/setup.bash, rosversion -d, which roscore, which rviz, and rospack find two_drones_pkg. Capture Fig. 1.",
-        "4. Run roslaunch two_drones_pkg two_drones.launch static:=true. Wait for RViz. Confirm Fixed Frame = world, MarkerArray status OK, and AVs checked. Capture Fig. 2.",
-        "5. In Terminal 3 run rosnode list, rostopic list, rosnode info /plots_publisher_node, and rostopic info /visuals. Capture Fig. 3.",
-        "6. Stop only the launch with Ctrl+C. Keep roscore running.",
-        "7. Run roslaunch two_drones_pkg two_drones.launch. Wait 5 to 10 seconds so the three trails become visible. Capture Fig. 4.",
-        "8. In Terminal 3 run rosrun tf tf_echo world av1 and rostopic hz /tf. Wait until translation values change and the frequency stabilizes. Capture Fig. 5.",
-        "9. In RViz change Global Options -> Fixed Frame from world to av1. Keep MarkerArray and all four namespaces enabled. Run rosrun tf tf_echo av1 av2 in Terminal 3. Capture Fig. 6.",
-        "10. The captured screenshots are embedded in Figs. 1 through 6. Fig. 7 is the analytic relative-trajectory plot generated from the derived expression.",
-        "11. Before submission, confirm that the document title, author name, student ID, figures, and all mathematical deliverables are present.",
-    ]
-    for s in steps:
-        add_bullet(doc, s)
-    add_table(doc, "TABLE V. FINAL SUBMISSION CHECKLIST", ["Evidence", "Status before student insertion"], [
-        ("ROS Noetic and package path", "Verified in Fig. 1"),
-        ("Static nodes and topics", "Verified in Figs. 2 and 3"),
-        ("Dynamic AV1 and AV2 motion", "Verified in Fig. 4"),
-        ("Changing TF values and frequency", "Verified in Fig. 5"),
-        ("Relative AV2-to-AV1 view", "Verified in Fig. 6"),
-        ("Math derivations", "Deliverables 4-6 completed"),
-        ("Author information", "Li Zehao; 24020036039"),
-    ], [1.65, 1.6])
-
-    add_heading(doc, "10. Conclusion", 1)
-    add_body(doc, "LAB2 established a working ROS 1 Noetic environment and used it to publish, query, and visualize the two-drone coordinate frames. The implementation satisfies the required node, topic, launch, transform, and tf2 lookup functions. The analytic results show that the AV2 trajectory is a parabola in the world frame and an ellipse on the plane z - 2y = 1 when expressed relative to AV1. The remaining report work is limited to inserting the student's screenshots and completing the identifying information and any instructor-required explicit matrix expansion.")
+    add_heading(doc, "9. Conclusion", 1)
+    add_body(doc, "LAB2 established a working ROS 1 Noetic environment and used it to publish, query, and visualize the two-drone coordinate frames. The implementation satisfies the required node, topic, launch, transform, and tf2 lookup functions. The analytic results show that the AV2 trajectory is a parabola in the world frame and an ellipse on the plane z - 2y = 1 when expressed relative to AV1.")
 
     add_heading(doc, "References", 1)
     add_body(doc, "[1] MIT VNAV Lab 2 Exercises, https://vnav.mit.edu/labs_2023/lab2/exercises.html")
