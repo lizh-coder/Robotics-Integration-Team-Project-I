@@ -1,0 +1,105 @@
+LAB 3 - Individual Deliverable 1
+Transformations in Practice
+
+Student name: To be filled in
+Student number: To be filled in
+GitHub repository: https://github.com/lizh-coder/Robotics-Integration-Team-Project-I
+
+This document answers the five ROS rotation-conversion questions. The code assumes
+the ROS Noetic tf2 APIs and the usual quaternion component order:
+geometry_msgs::Quaternion stores x, y, z, w, while the tf2 Quaternion constructor
+also receives x, y, z, w. Eigen::Quaterniond is constructed as w, x, y, z.
+
+Required headers:
+
+    #include <geometry_msgs/Quaternion.h>
+    #include <tf2/LinearMath/Quaternion.h>
+    #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+    #include <tf2/utils.h>
+    #include <Eigen/Geometry>
+
+======================================================================
+A. Message versus tf
+======================================================================
+
+Question 1
+Assume that an incoming geometry_msgs::Quaternion quat_msg contains the robot
+orientation and that tf2::Quaternion quat_tf has already been declared. Convert
+quat_msg to quat_tf in one line of C++.
+
+Answer
+
+    tf2::fromMsg(quat_msg, quat_tf);
+
+Explanation: tf2_geometry_msgs provides the ROS 1 specialization of fromMsg for
+geometry_msgs::Quaternion and tf2::Quaternion. It copies the message components
+using the correct x, y, z, w convention.
+
+
+Question 2
+Assume the newest orientation is stored in tf2::Quaternion quat_tf. Convert it
+to a new geometry_msgs::Quaternion named quat_msg in one line of C++.
+
+Answer
+
+    geometry_msgs::Quaternion quat_msg = tf2::toMsg(quat_tf);
+
+Explanation: toMsg returns a geometry_msgs::Quaternion value, so it can be used
+directly in the declaration and initialization of quat_msg.
+
+
+Question 3
+If only the scalar value of a tf2::Quaternion is required, which member function
+should be used?
+
+Answer
+
+    quat_tf.getW();
+
+Explanation: In the ROS/tf2 convention the scalar part is the w component. The
+member function getW() returns this component.
+
+
+======================================================================
+B. Conversion between rotation representations
+======================================================================
+
+Question 4
+Assume that quat_t is a tf2::Quaternion. Extract its yaw component with one
+function call.
+
+Answer
+
+    double yaw = tf2::getYaw(quat_t);
+
+Explanation: tf2::getYaw returns the yaw angle in radians using the quaternion.
+
+
+Question 5
+Assume that quat_msg is a geometry_msgs::Quaternion. Convert it to an Eigen
+3-by-3 rotation matrix.
+
+Answer
+
+    tf2::Quaternion q_tf;
+    tf2::fromMsg(quat_msg, q_tf);
+    Eigen::Matrix3d R =
+        Eigen::Quaterniond(q_tf.getW(), q_tf.getX(), q_tf.getY(), q_tf.getZ())
+            .toRotationMatrix();
+
+Explanation: First, tf2::fromMsg converts the ROS message to a tf2 quaternion.
+Eigen::Quaterniond expects its constructor arguments in the order w, x, y, z,
+so the tf2 components are passed in that order. toRotationMatrix() then returns
+the corresponding Eigen 3-by-3 rotation matrix.
+
+
+References
+
+[1] MIT VNAV Lab 3 Exercises:
+    https://vnav.mit.edu/labs_2023/lab3/exercises.html
+
+[2] ROS geometry2, tf2_geometry_msgs, noetic-devel:
+    https://github.com/ros/geometry2/blob/noetic-devel/tf2_geometry_msgs/include/tf2_geometry_msgs/tf2_geometry_msgs.h
+
+[3] Eigen Quaternion documentation:
+    https://eigen.tuxfamily.org/dox/classEigen_1_1Quaternion.html
