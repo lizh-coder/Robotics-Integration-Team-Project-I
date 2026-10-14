@@ -9,7 +9,7 @@ This directory is the complete Lab 4 submission folder required by the VNAV hand
 | `01_Individual_Deliverables/` | Typeset PDF answers for Deliverables 1 and 2, plus the English report. |
 | `02_Team_Racing_Source_Code/` | ROS packages, Lab 4 dependencies, and RViz configuration used for Deliverable 3. |
 | `03_Runtime_Evidence/` | Machine-readable record from the verified fastest full-course run. |
-| `rviz_drone_race.txt` | Required public video and rosbag links; replace the two placeholders before final course submission. |
+| `rviz_drone_race.txt` | Required public video and rosbag links for the final course submission. |
 
 ## Team racing implementation
 
@@ -48,4 +48,4 @@ The last command begins waypoint publication and starts the race.  The simulator
 
 ## Before the final course submission
 
-The individual PDFs and report retain their existing author-identification fields.  Complete those fields if the course staff require them.  Also replace the two placeholders in `rviz_drone_race.txt` with publicly viewable Google Drive or Dropbox links for the race video and the rosbag (`/current_state` and `/desired_state`), as required by the handout.
+The individual PDFs and report identify Li Zehao (24020036039).  Add publicly viewable Google Drive or Dropbox links for the race video and the rosbag (`/current_state` and `/desired_state`) in `rviz_drone_race.txt`, as required by the handout.
