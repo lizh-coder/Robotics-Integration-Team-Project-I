@@ -1,0 +1,28 @@
+<launch>
+  <!-- The attitude loop must settle substantially faster than the position
+       loop.  Similar bandwidths caused the previous growing bank oscillation. -->
+  <param name="kx" type="double" value="5.0" />
+  <param name="kv" type="double" value="4.5" />
+  <!-- Racing gains are angular acceleration gains, scaled by the simulator's
+       actual inertia in controller_node (9 rad/s critically damped loop). -->
+  <param name="kr" type="double" value="81.0" />
+  <param name="komega" type="double" value="18.0" />
+
+  <!-- Launch trajectory generation and control only after their parameters
+       have been placed on the ROS parameter server. -->
+  <arg name="max_speed" default="8.0" />
+  <arg name="max_acceleration" default="8.5" />
+  <arg name="gate_speed" default="5.6" />
+  <arg name="max_yaw_rate" default="1.8" />
+  <node name="trajectory_generation_node" pkg="trajectory_generation" type="trajectory_generation_node" output="screen">
+    <param name="max_speed" value="$(arg max_speed)" />
+    <param name="max_acceleration" value="$(arg max_acceleration)" />
+    <param name="gate_speed" value="$(arg gate_speed)" />
+    <param name="max_vertical_speed" value="2.0" />
+    <param name="max_vertical_acceleration" value="3.0" />
+    <param name="max_yaw_rate" value="$(arg max_yaw_rate)" />
+  </node>
+  <node name="controller_node" pkg="controller_pkg" type="controller_node">
+    <param name="racing_safety" value="true" />
+  </node>
+</launch>

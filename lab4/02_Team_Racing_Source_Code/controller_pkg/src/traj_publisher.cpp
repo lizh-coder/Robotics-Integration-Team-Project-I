@@ -1,0 +1,153 @@
+#include <ros/ros.h>
+#include <tf/transform_broadcaster.h>
+#include <std_msgs/String.h>
+#include <trajectory_msgs/MultiDOFJointTrajectoryPoint.h>
+#include <sstream>
+#include <iostream>
+
+#include <math.h>
+
+#define STATIC_POSE 0
+
+#define PI M_PI
+
+#define TFOUTPUT 1
+int main(int argc, char **argv)
+{
+    ros::init(argc, argv, "traj_publisher");
+    ros::NodeHandle n;
+    ros::Publisher desired_state_pub = n.advertise<trajectory_msgs::MultiDOFJointTrajectoryPoint>("desired_state", 1);
+    ros::Rate loop_rate(500);
+    ros::Time start;  // Set after the first valid simulated clock tick.
+
+#if TFOUTPUT
+    tf::TransformBroadcaster br;
+#endif
+
+    int count = 0;
+    while (ros::ok()) {
+        tf::Vector3 origin(0,0,0);
+
+        const ros::Time now = ros::Time::now();
+        // With /use_sim_time enabled, a node can start before /clock arrives.
+        // Starting at time zero would make the first desired sample jump to
+        // the middle of the circle at the current simulation timestamp.
+        if (now.isZero()) {
+            ros::spinOnce();
+            loop_rate.sleep();
+            continue;
+        }
+        if (start.isZero()) {
+            start = now;
+        }
+        const double t = (now - start).toSec();
+
+        // Quantities to fill in
+        tf::Transform desired_pose(tf::Transform::getIdentity());
+
+        geometry_msgs::Twist velocity;
+        velocity.linear.x = velocity.linear.y = velocity.linear.z = 0;
+        velocity.angular.x = velocity.angular.y = velocity.angular.z = 0;
+        geometry_msgs::Twist acceleration;
+        acceleration.linear.x = acceleration.linear.y = acceleration.linear.z = 0;
+        acceleration.angular.x = acceleration.angular.y = acceleration.angular.z = 0;
+
+#if STATIC_POSE
+        // Static Pose
+        tf::Vector3 displacement(0,0,2);
+        desired_pose.setOrigin(origin+displacement);
+        tf::Quaternion q;
+        q.setRPY(0,0,PI/4);
+        count++;
+        std::cout<<"Desired Orientation" << count << std::endl;
+        desired_pose.setRotation(q);
+
+#else
+        // Smoothly enter the prescribed 5 m circular trajectory.  At t=0 the
+        // vehicle is at the same (0, 0, 2) hover target used in STATIC_POSE;
+        // a sixth-order-free C2 blend then removes the unsafe position, yaw,
+        // velocity, and acceleration step that the original circle creates.
+        const double R = 5.0;
+        const double timeScale = 5.0;
+        const double omega = 1.0 / timeScale;
+        const double rampDuration = 8.0;
+        double blend, blendDot, blendDDot;
+        if (t < rampDuration) {
+            const double u = t / rampDuration;
+            blend = 3.0 * u * u - 2.0 * u * u * u;
+            blendDot = (6.0 * u - 6.0 * u * u) / rampDuration;
+            blendDDot = (6.0 - 12.0 * u) / (rampDuration * rampDuration);
+        } else {
+            blend = 1.0;
+            blendDot = 0.0;
+            blendDDot = 0.0;
+        }
+
+        const double theta = omega * t;
+        const double sinTheta = sin(theta);
+        const double cosTheta = cos(theta);
+        // Orbit motion is translational.  Keep the camera heading fixed to
+        // remove unnecessary continuous yaw motion and make the viewpoint
+        // stable while the vehicle traces the circle.
+        const double yaw = 0.0;
+        const double yawRate = 0.0;
+
+        desired_pose.setOrigin(origin + tf::Vector3(
+            R * blend * sinTheta, R * blend * cosTheta, 2.0));
+        tf::Quaternion q;
+        q.setRPY(0, 0, yaw);
+        desired_pose.setRotation(q);
+
+        velocity.linear.x = R * (blendDot * sinTheta + blend * omega * cosTheta);
+        velocity.linear.y = R * (blendDot * cosTheta - blend * omega * sinTheta);
+        velocity.linear.z = 0.0;
+        velocity.angular.x = 0.0;
+        velocity.angular.y = 0.0;
+        velocity.angular.z = yawRate;
+
+        acceleration.linear.x = R * (blendDDot * sinTheta
+            + 2.0 * blendDot * omega * cosTheta
+            - blend * omega * omega * sinTheta);
+        acceleration.linear.y = R * (blendDDot * cosTheta
+            - 2.0 * blendDot * omega * sinTheta
+            - blend * omega * omega * cosTheta);
+        acceleration.linear.z = 0.0;
+#endif
+
+        // Publish
+        trajectory_msgs::MultiDOFJointTrajectoryPoint msg;
+        msg.transforms.resize(1);
+        msg.transforms[0].translation.x = desired_pose.getOrigin().x();
+        msg.transforms[0].translation.y = desired_pose.getOrigin().y();
+        msg.transforms[0].translation.z = desired_pose.getOrigin().z();
+        msg.transforms[0].rotation.x = desired_pose.getRotation().getX();
+        msg.transforms[0].rotation.y = desired_pose.getRotation().getY();
+        msg.transforms[0].rotation.z = desired_pose.getRotation().getZ();
+        msg.transforms[0].rotation.w = desired_pose.getRotation().getW();
+        msg.velocities.resize(1);
+        msg.velocities[0] = velocity;
+        msg.accelerations.resize(1);
+        msg.accelerations[0] = acceleration;
+        desired_state_pub.publish(msg);
+
+        std::stringstream ss;
+        ss << "Trajectory Position"
+           << " x:" << desired_pose.getOrigin().x()
+           << " y:" << desired_pose.getOrigin().y()
+           << " z:" << desired_pose.getOrigin().z();
+        ROS_INFO("%s", ss.str().c_str());
+
+#if TFOUTPUT
+        br.sendTransform(tf::StampedTransform(desired_pose, ros::Time::now(),
+                                              "world", "av-desired"));
+#endif
+
+        ros::spinOnce();
+
+        loop_rate.sleep();
+        ++count;
+    }
+
+
+    return 0;
+}

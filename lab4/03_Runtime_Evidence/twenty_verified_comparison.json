@@ -1,0 +1,25 @@
+{
+  "baseline_final_plane_seconds": 56.33478990000003,
+  "final_plane_seconds": 20.817907450000007,
+  "time_reduction_percent": 63.04609019230585,
+  "speed_gain_percent": 170.6073606836023,
+  "previous_version_final_plane_seconds": 44.70254788500006,
+  "time_reduction_from_previous_percent": 53.430154577418485,
+  "peak_speed_mps": 7.13895130524233,
+  "rms_tracking_error_m": 0.06076816100473353,
+  "max_tracking_error_m": 0.2526655204515437,
+  "max_tilt_deg": 49.08024097955667,
+  "all_gates_crossed_in_order": true,
+  "collision_objects": [],
+  "max_gate_horizontal_error_m": 0.09904705658543947,
+  "max_gate_height_error_m": 0.029485521386487967,
+  "upward_overshoot_m": 0.062120591318359564,
+  "rms_tracking_error_during_race_m": 0.08356008059914083,
+  "final_five_seconds_max_tilt_deg": 0.0,
+  "final_five_seconds_max_speed_mps": 0.021945711613038276,
+  "final_position_m": [
+    -38.14275,
+    14.70953,
+    2.494419
+  ]
+}
