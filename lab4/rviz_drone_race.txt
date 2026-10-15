@@ -1,9 +1,9 @@
 VNAV Lab 4 — Team 20 Drone Racing Evidence
 
-Race video (public Google Drive or Dropbox URL):
-PASTE_PUBLIC_RACE_VIDEO_URL_HERE
+Race video (public Google Drive URL; anyone with the link can view):
+https://drive.google.com/file/d/1MXayMYntjjXehuw3ABSpQ0k1e5I3EoNw/view?usp=drivesdk
 
-Fastest complete-run rosbag (public Google Drive or Dropbox URL):
-PASTE_PUBLIC_ROSBAG_URL_HERE
+Fastest complete-run rosbag (public Google Drive URL; anyone with the link can view):
+https://drive.google.com/file/d/11fnljpLc1urckc2ue5p52n0FwURVLI5q/view?usp=drivesdk
 
-The rosbag must include /current_state and /desired_state.  Replace both placeholders with publicly viewable links before final submission.
+Verified rosbag contents: /current_state and /desired_state.
